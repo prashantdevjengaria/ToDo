@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -90,7 +91,7 @@ const MainContainer = () => {
   };
 
   const handleAddTask = () => {
-    if (textInput.visible) addTask(textInput.text);
+    if (textInput.visible && textInput.text) addTask(textInput.text);
     setTextInput({visible: !textInput.visible, text: ''});
   };
 
@@ -101,6 +102,21 @@ const MainContainer = () => {
         a.title.localeCompare(b.title),
       );
     setSorted({state: !sorted.state, data: sortedData});
+  };
+
+  const RenderFlatlist = () => (
+    <FlatList
+      showsVerticalScrollIndicator={false}
+      data={sorted.state ? sorted.data : tasks}
+      renderItem={renderItem}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={fetchData} />
+      }
+    />
+  );
+
+  const handleBackgroundPress = () => {
+    textInput.visible && handleAddTask();
   };
 
   return (
@@ -114,14 +130,13 @@ const MainContainer = () => {
         />
       ) : (
         <Fragment>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={sorted.state ? sorted.data : tasks}
-            renderItem={renderItem}
-            refreshControl={
-              <RefreshControl refreshing={loading} onRefresh={fetchData} />
-            }
-          />
+          {textInput.visible ? (
+            <Pressable style={{flex: 1}} onPress={handleBackgroundPress}>
+              <RenderFlatlist />
+            </Pressable>
+          ) : (
+            <RenderFlatlist />
+          )}
           <View style={styles.footerContainer}>
             {textInput.visible && (
               <TextInput
@@ -135,7 +150,6 @@ const MainContainer = () => {
               <ButtonComponent
                 text={sorted.state ? 'Sorted by title' : 'Sort by title'}
                 onPress={handleTaskSorting}
-                nonPromise
               />
               <ButtonComponent text="Add Task" onPress={handleAddTask} />
             </View>

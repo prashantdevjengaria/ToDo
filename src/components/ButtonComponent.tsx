@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Pressable,
-  PressableProps,
   StyleSheet,
   Text,
   ViewStyle,
@@ -13,18 +12,11 @@ import {memo, useState} from 'react';
 type Props = {
   text: string;
   onPress: () => void;
-  nonPromise?: boolean;
+  disabled?: boolean;
   style?: ViewStyle;
-  props?: PressableProps;
 };
 
-const ButtonComponent = ({
-  text,
-  onPress,
-  nonPromise,
-  style,
-  ...props
-}: Props) => {
+const ButtonComponent = ({text, onPress, disabled, style, ...props}: Props) => {
   const [loading, setLoading] = useState(false);
   const handleOnPress = async () => {
     setLoading(true);
@@ -35,7 +27,7 @@ const ButtonComponent = ({
     <Pressable
       style={[styles.container, style]}
       onPress={handleOnPress}
-      disabled={loading}
+      disabled={loading || disabled}
       {...props}>
       {loading ? (
         <ActivityIndicator color={Colors.white} />

@@ -58,7 +58,7 @@ const TaskCard = ({item}: Props) => {
         <ButtonComponent
           text={completed ? 'Completed' : 'Mark as Complete'}
           onPress={completeTask}
-          props={{disabled: completed}}
+          disabled={completed}
         />
         <ButtonComponent text="Delete" onPress={deleteTask} />
       </View>
